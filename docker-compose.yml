@@ -10,11 +10,19 @@ services:
     build: ./application-backend-server
     image: hotensv/app:dev
     container_name: application-backend-server
+    depends_on:
+      - relational-database-server
     networks: [cloud-net]
     ports: [ "8085:8081" ]
     environment:
       OIDC_ISSUER:   "http://authentication-identity-server:8080/realms/master"
       OIDC_AUDIENCE: "myapp"
+      DB_HOST: relational-database-server
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: minicloud
+      STUDENT_DB_NAME: studentdb
   relational-database-server:
     image: mariadb:11
     container_name: relational-database-server
@@ -24,7 +32,10 @@ services:
     volumes:
       - ./relational-database-server/init:/docker-entrypoint-initdb.d:ro
     ports: [ "3306:3306" ]
-    networks: [cloud-net]
+    networks:
+      cloud-net:
+        aliases:
+          - db
   authentication-identity-server:
     image: quay.io/keycloak/keycloak:latest
     container_name: authentication-identity-server
@@ -82,7 +93,6 @@ services:
     depends_on:
       - web-frontend-server
       - application-backend-server
-      - authentication-identity-server
     ports: [ "80:80" ]
     volumes:
       - ./api-gateway-proxy-server/nginx.conf:/etc/nginx/nginx.conf:ro

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyMiniCloud - Blog | Episode 2</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;600;800&display=swap');
+    :root {
+      --ink: #193426;
+      --muted: #5f7f6b;
+      --brand: #0f2e45;
+      --action: #1f7a3f;
+      --bg: #f4fbf4;
+      --card: #ffffff;
+      --border: #dcede3;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Manrope", sans-serif; background: var(--bg); color: var(--ink); }
+    header { background: var(--brand); color: #fff; }
+    .top { max-width: 1080px; margin: 0 auto; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; }
+    .top strong { font-size: 18px; }
+    .top a { color: #ddf6e8; text-decoration: none; font-weight: 700; margin-left: 14px; }
+    .top a:hover { color: #fff; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 22px 18px 30px; }
+    .layout { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+    .actions { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .link-btn {
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 800;
+      border: 1px solid #c2dfcb;
+      color: var(--action);
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 14px;
+    }
+    h1 { font-family: "DM Serif Display", serif; margin: 0 0 8px; font-size: 40px; line-height: 1.08; }
+    .meta { color: var(--muted); margin-bottom: 12px; }
+    img { width: 100%; max-height: 340px; object-fit: cover; border-radius: 14px; }
+    article { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 12px; }
+    p { line-height: 1.65; margin-top: 0; }
+    .side .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+    .side ul { margin: 0; padding-left: 18px; }
+    .side a { color: var(--action); text-decoration: none; }
+    .social {
+      margin-top: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .social .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .like { display: flex; align-items: center; gap: 8px; }
+    .like button { border: 0; background: #1f7a3f; color: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+    .comment-form { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 12px; }
+    .comment-form input, .comment-form textarea {
+      width: 100%;
+      border: 1px solid #d7e9dc;
+      border-radius: 8px;
+      padding: 9px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .comment-form textarea { min-height: 90px; resize: vertical; }
+    .comment-form button { width: fit-content; border: 0; background: #155f31; color: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+    .comment-item { border-top: 1px solid #e4efe7; padding: 10px 0; }
+    .comment-meta { color: var(--muted); font-size: 13px; }
+    .more-wrap { margin-top: 10px; }
+    .more-btn { border: 1px solid #c2dfcb; background: #fff; color: var(--action); border-radius: 8px; padding: 7px 12px; font-weight: 700; cursor: pointer; }
+    .hidden { display: none; }
+    footer { background: #0b2436; color: #bcd2e1; }
+    footer .ft { max-width: 1080px; margin: 0 auto; padding: 14px 18px; font-size: 13px; }
+    @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="top">
+      <strong>MyMiniCloud - Blog</strong>
+      <nav><a href="/">Home</a><a href="/blog/">Blog Hub</a></nav>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="layout">
+      <main>
+        <div class="actions">
+          <a class="link-btn" href="/blog/blog1.html">Previous</a>
+          <a class="link-btn" href="/blog/">Back to Hub</a>
+          <a class="link-btn" href="/blog/blog3.html">Next Episode</a>
+        </div>
+
+        <h1>Monitoring from Metrics to Decisions</h1>
+        <div class="meta">Tac gia: Nhom MiniCloud | Chuyen muc: Monitoring</div>
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80" alt="Monitoring dashboard" />
+
+        <article>
+          <p>Prometheus thu thap metric theo chu ky scrape, sau do Grafana hien thi du lieu thanh cac panel truc quan de theo doi suc khoe he thong.</p>
+          <p>Trong bai tap cuoi ky, bo chi so CPU, memory va network la nen tang de danh gia kha nang van hanh cua cac container trong cloud-net.</p>
+          <p>Viec them target, kiem tra status UP va xay dung dashboard giup qua trinh demo ro rang va co tinh thuyet phuc cao.</p>
+        </article>
+      </main>
+
+      <aside class="side">
+        <section class="card">
+          <h3>Thong tin tac gia</h3>
+          <p>MSSV: xxxxxxx</p>
+          <p>Noi dung: Monitoring va Visualization</p>
+        </section>
+        <section class="card">
+          <h3>Bai viet lien quan</h3>
+          <ul>
+            <li><a href="/blog/blog1.html">Docker Network Design for MiniCloud</a></li>
+            <li><a href="/blog/blog3.html">Security Routing with Gateway and OIDC</a></li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+
+    <section class="social">
+      <div class="head">
+        <h3>Like va Comment</h3>
+        <div class="like">
+          <button id="likeBtn" type="button">Like</button>
+          <strong id="likeCount">0</strong>
+        </div>
+      </div>
+
+      <div class="comment-form">
+        <input id="cName" placeholder="Ten cua ban" />
+        <textarea id="cText" placeholder="Nhap binh luan..."></textarea>
+        <button id="postBtn" type="button">Gui comment</button>
+      </div>
+
+      <div id="commentList"></div>
+      <div class="more-wrap">
+        <button id="loadMoreBtn" class="more-btn hidden" type="button">Xem them binh luan</button>
+      </div>
+    </section>
+  </div>
+
+  <footer><div class="ft">MyMiniCloud - Blog | Server 1 Article</div></footer>
+
+  <script>
+    const key = 'blog2';
+    const PAGE_SIZE = 10;
+    const MAX_STORED = 100;
+    let visibleCount = PAGE_SIZE;
+
+    const likeEl = document.getElementById('likeCount');
+    const listEl = document.getElementById('commentList');
+    const loadMoreEl = document.getElementById('loadMoreBtn');
+
+    function esc(v) {
+      return String(v || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getComments() {
+      return JSON.parse(localStorage.getItem(key + ':comments') || '[]');
+    }
+
+    function renderComments() {
+      likeEl.textContent = localStorage.getItem(key + ':likes') || '0';
+      const comments = getComments();
+      const visible = comments.slice(0, visibleCount);
+      listEl.innerHTML = visible.map(c => `
+        <div class="comment-item">
+          <strong>${esc(c.name)}</strong>
+          <div class="comment-meta">${new Date(c.at).toLocaleString()}</div>
+          <div>${esc(c.text)}</div>
+        </div>
+      `).join('');
+
+      loadMoreEl.style.display = comments.length > visibleCount ? 'inline-block' : 'none';
+    }
+
+    document.getElementById('likeBtn').addEventListener('click', () => {
+      const n = Number(localStorage.getItem(key + ':likes') || '0') + 1;
+      localStorage.setItem(key + ':likes', String(n));
+      renderComments();
+    });
+
+    document.getElementById('postBtn').addEventListener('click', () => {
+      const name = document.getElementById('cName').value.trim() || 'Anonymous';
+      const text = document.getElementById('cText').value.trim();
+      if (!text) return;
+
+      const comments = getComments();
+      comments.unshift({ name, text, at: new Date().toISOString() });
+      localStorage.setItem(key + ':comments', JSON.stringify(comments.slice(0, MAX_STORED)));
+
+      document.getElementById('cText').value = '';
+      visibleCount = PAGE_SIZE;
+      renderComments();
+    });
+
+    loadMoreEl.addEventListener('click', () => {
+      visibleCount += PAGE_SIZE;
+      renderComments();
+    });
+
+    renderComments();
+  </script>
+</body>
+</html>

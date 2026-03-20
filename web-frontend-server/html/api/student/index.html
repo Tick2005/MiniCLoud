@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danh sach sinh vien (JSON)</title>
+  <style>
+    body { 
+        margin:0; 
+        font-family:"Segoe UI",Tahoma,sans-serif; 
+        background:#f2f4fb; 
+        color:#1b2c42; 
+    }
+    .wrap { 
+        max-width:980px; 
+        margin:26px auto; 
+        padding:0 14px; 
+    }
+    .panel { 
+        background:#fff; 
+        border:1px solid #dce7f6; 
+        border-radius:14px; 
+        padding:16px; 
+        box-shadow:0 10px 22px rgba(27,44,66,.08); 
+    }
+    h1 { 
+        margin:0 0 8px; 
+        color:#2846b7; 
+    }
+    .sub { 
+        color:#5a6f89; 
+        margin:0 0 10px; 
+    }
+    table { width:100%; border-collapse:collapse; }
+    th, td { text-align:left; padding:10px 8px; border-bottom:1px solid #e7edf8; }
+    th { background:#4f2ce7; color:#fff; }
+    .endpoint { margin-top:10px; font-size:13px; color:#4e6279; font-weight:700; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel">
+      <h1>Danh sach sinh vien (JSON)</h1>
+      <p class="sub">Cau 2: API /student doc du lieu tu students.json.</p>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Major</th><th>GPA</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="endpoint">URL bat buoc: /api/student</div>
+    </section>
+  </div>
+  <script>
+    async function loadRows() {
+      const res = await fetch('/api/data/student');
+      const rows = await res.json();
+      document.getElementById('rows').innerHTML = rows.map(r =>
+        `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.major}</td><td>${r.gpa}</td></tr>`
+      ).join('');
+    }
+    loadRows();
+  </script>
+</body>
+</html>
