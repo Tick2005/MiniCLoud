@@ -1,0 +1,4 @@
+zone "cloud.local" {
+    type master;
+    file "/etc/bind/db.cloud.local";
+};
