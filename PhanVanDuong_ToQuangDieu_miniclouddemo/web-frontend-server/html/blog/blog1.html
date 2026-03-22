@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog 1 - Building Reliable Cloud Skills</title>
+  <link rel="stylesheet" href="/assets/css/blog.css" />
+</head>
+<body>
+  <header class="site-header">
+    <strong>MyMiniCloud Blog</strong>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/blog/">All Posts</a>
+    </nav>
+  </header>
+
+  <main class="container blog-shell">
+    <section class="card article-split">
+      <article class="article-content">
+        <div class="btn-row">
+          <a class="btn" href="/">Home</a>
+          <a class="btn" href="/blog/blog3.html">Previous</a>
+          <a class="btn" href="/blog/blog2.html">Next</a>
+        </div>
+
+        <h1>Building Reliable Cloud Skills Through Small, Repeatable Labs</h1>
+        <p class="meta">Published by David Tran · 8 min read</p>
+
+        <figure class="article-media">
+          <a href="/assets/images/cloud-lab.svg" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/images/cloud-lab.svg" alt="Mini cloud reliability practice diagram" />
+          </a>
+          <figcaption>Click image to open full size. Diagram illustrates a compact reliability training loop.</figcaption>
+        </figure>
+
+        <p>
+          Most engineers do not become strong in cloud architecture by reading ten random articles.
+          Real confidence usually appears when you repeatedly build small systems that force you to
+          reason about routing, service discovery, observability, and failure recovery.
+        </p>
+
+        <h2>Why small labs outperform passive learning</h2>
+        <p>
+          A compact lab gives you immediate feedback. You write a config, restart a service,
+          make a request, inspect logs, and then adjust. That fast loop transforms abstract concepts
+          like reverse proxying or DNS zones into muscle memory. Over time, the same workflow teaches
+          you how to isolate root causes quickly under pressure.
+        </p>
+
+        <h2>A practical reliability routine</h2>
+        <p>
+          Start each session with one goal: for example, route a new endpoint or add a database-backed
+          feature without breaking existing APIs. Then run a baseline checklist before and after changes.
+          This habit matters because reliability is not only about adding features, it is about preserving
+          behavior users already depend on.
+        </p>
+
+        <h3>What to practice next</h3>
+        <p>
+          After each successful iteration, intentionally introduce one controlled fault: wrong DNS record,
+          broken proxy path, or missing environment variable. Debug it from logs and network probes,
+          then document the fix. This discipline builds operational maturity and makes your architecture
+          decisions more grounded in reality.
+        </p>
+
+        <p>
+          If you want to deepen this method, read the official
+          <a href="https://12factor.net/" target="_blank" rel="noopener noreferrer">Twelve-Factor App</a>
+          principles and compare them with your current container setup. You can also review
+          <a href="https://prometheus.io/docs/introduction/overview/" target="_blank" rel="noopener noreferrer">Prometheus monitoring basics</a>
+          to understand how observability closes the feedback loop in reliability practice.
+        </p>
+      </article>
+
+      <aside class="side-stack">
+        <section class="widget">
+          <h3>Author</h3>
+          <p><strong>David Tran</strong></p>
+          <p>Cloud engineering student focused on practical system integration.</p>
+        </section>
+
+        <section class="widget">
+          <h3>Related posts</h3>
+          <ul class="post-list">
+            <li><a href="/blog/blog2.html">Weekend Travel for Engineers</a></li>
+            <li><a href="/blog/blog3.html">Learning That Actually Sticks</a></li>
+            <li><a href="/blog/">Back to blog index</a></li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+
+    <aside class="card comment-panel">
+      <section class="widget">
+        <h3>Likes</h3>
+        <p class="like-count" id="like-count">24</p>
+        <button id="like-button" type="button">Like this post</button>
+      </section>
+
+      <section class="widget">
+        <h3>Comments</h3>
+        <div class="comment-item">
+          <strong>Alice:</strong> Great breakdown of why short feedback loops matter in cloud practice.
+        </div>
+        <div class="comment-item">
+          <strong>Minh:</strong> The baseline checklist tip helped me avoid breaking old routes.
+        </div>
+        <div class="comment-item">
+          <strong>Ken:</strong> Debugging intentionally broken configs is an underrated exercise.
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <p>MyMiniCloud - Blog Article 1</p>
+  </footer>
+
+  <script src="/assets/js/blog.js"></script>
+</body>
+</html>

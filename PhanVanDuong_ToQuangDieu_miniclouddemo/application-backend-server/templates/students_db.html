@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Students DB - CRUD Console</title>
+  <link rel="stylesheet" href="/api/static/css/app-ui.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">MyMiniCloud - App Portal</div>
+    <nav>
+      <a href="/api/student">Student JSON</a>
+      <a href="/api/students-db">Students DB</a>
+      <a href="/api/hello">Health API</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel wide">
+      <h1>Students Database Management</h1>
+      <p>Perform CRUD operations, search records, and select one or many rows for bulk actions.</p>
+
+      <div class="toolbar">
+        <input id="search-q" type="text" placeholder="Search by student ID, name, or major..." />
+        <button id="search-btn" type="button">Search</button>
+        <button id="refresh-btn" type="button">Refresh</button>
+        <button id="delete-selected-btn" class="danger" type="button">Delete Selected</button>
+        <button id="delete-all-btn" class="danger ghost" type="button">Delete All</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input id="check-all" type="checkbox" /></th>
+              <th>ID</th>
+              <th>Student ID</th>
+              <th>Full Name</th>
+              <th>Date of Birth</th>
+              <th>Major</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="db-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="panel side">
+      <h2>Create / Update</h2>
+      <form id="student-form">
+        <input id="row-id" type="hidden" />
+
+        <label for="student-id">Student ID</label>
+        <input id="student-id" type="text" placeholder="SV004" maxlength="10" required />
+
+        <label for="fullname">Full Name</label>
+        <input id="fullname" type="text" placeholder="Nguyen Van F" maxlength="100" required />
+
+        <label for="dob">Date of Birth</label>
+        <input id="dob" type="date" required />
+
+        <label for="major">Major</label>
+        <input id="major" type="text" placeholder="Artificial Intelligence" maxlength="50" required />
+
+        <div class="stack">
+          <button id="save-btn" type="submit">Save</button>
+          <button id="reset-btn" type="button" class="ghost">Reset Form</button>
+        </div>
+      </form>
+
+      <h3>Quick notes</h3>
+      <ul>
+        <li>Create: fill form and click Save.</li>
+        <li>Update: click Edit on a row, modify fields, click Save.</li>
+        <li>Delete one: click Delete on a row.</li>
+        <li>Delete many: check rows and click Delete Selected.</li>
+      </ul>
+      <p id="status" class="status">Ready.</p>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <p>MyMiniCloud - Advanced Server 3 CRUD UI</p>
+  </footer>
+
+  <script src="/api/static/js/students-db.js"></script>
+</body>
+</html>

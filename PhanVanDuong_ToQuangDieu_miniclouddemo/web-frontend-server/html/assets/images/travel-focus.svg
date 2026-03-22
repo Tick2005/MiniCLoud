@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Weekend Travel Illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#123b53"/>
+      <stop offset="100%" stop-color="#1f7ca9"/>
+    </linearGradient>
+    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7ec8d7"/>
+      <stop offset="100%" stop-color="#2c8ea2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="950" cy="150" r="70" fill="#ffe59a"/>
+  <path d="M0 420 C180 350 330 500 520 430 C700 360 830 500 1200 410 L1200 630 L0 630 Z" fill="url(#hill)"/>
+  <rect x="180" y="180" width="840" height="210" rx="22" fill="#f5fbff" opacity="0.94"/>
+  <text x="600" y="255" text-anchor="middle" font-size="42" font-family="Segoe UI, Arial" fill="#134d70" font-weight="700">Weekend Reset for Engineers</text>
+  <text x="600" y="305" text-anchor="middle" font-size="25" font-family="Segoe UI, Arial" fill="#2a5f7f">Planning, recovery, and focused return-to-work rhythm</text>
+  <g fill="#134d70" opacity="0.9">
+    <path d="M290 468 l40 -65 l40 65 z"/>
+    <path d="M370 468 l45 -80 l45 80 z"/>
+    <path d="M845 470 h110 l-20 18 h-70 z"/>
+  </g>
+</svg>

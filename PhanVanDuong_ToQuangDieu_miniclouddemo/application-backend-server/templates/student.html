@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Directory - JSON Source</title>
+  <link rel="stylesheet" href="/api/static/css/app-ui.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">MyMiniCloud - App Portal</div>
+    <nav>
+      <a href="/api/student">Student JSON</a>
+      <a href="/api/students-db">Students DB</a>
+      <a href="/api/hello">Health API</a>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel wide">
+      <h1>Student Directory (JSON)</h1>
+      <p>This page renders data from the JSON-based endpoint used in the advanced exercise for Server 2.</p>
+      <div class="toolbar">
+        <input id="student-search" type="text" placeholder="Search by name or major..." />
+        <button id="student-refresh" type="button">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Major</th>
+              <th>GPA</th>
+            </tr>
+          </thead>
+          <tbody id="student-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="panel side">
+      <h2>About this page</h2>
+      <ul>
+        <li>Data source: <code>/student</code></li>
+        <li>Format: JSON array</li>
+        <li>Rendered using vanilla JavaScript</li>
+      </ul>
+      <p><a class="link-btn" href="/api/students-db">Go to DB Management Page</a></p>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <p>MyMiniCloud - Advanced Server 2 UI</p>
+  </footer>
+
+  <script src="/api/static/js/student.js"></script>
+</body>
+</html>
