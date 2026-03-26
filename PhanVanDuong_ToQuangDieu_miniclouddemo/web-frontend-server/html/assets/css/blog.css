@@ -275,6 +275,37 @@ body {
   background: #dceaff;
 }
 
+#comment-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#comment-form input,
+#comment-form textarea,
+#comment-form button {
+  font: inherit;
+  border: 1px solid #c8d6ed;
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+
+#comment-form textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+#comment-form button {
+  background: #e6f0ff;
+  border-color: #aac6f7;
+  color: #123e87;
+  font-weight: 700;
+}
+
+#comment-form button:hover {
+  background: #dceaff;
+}
+
 @media (max-width: 980px) {
   .blog-shell,
   .article-split {

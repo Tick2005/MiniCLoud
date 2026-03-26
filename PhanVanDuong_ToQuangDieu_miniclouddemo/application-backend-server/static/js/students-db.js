@@ -1,8 +1,8 @@
 const bodyEl = document.getElementById("db-body");
 const statusEl = document.getElementById("status");
 const searchInput = document.getElementById("search-q");
-const searchBtn = document.getElementById("search-btn");
 const refreshBtn = document.getElementById("refresh-btn");
+const editSelectedBtn = document.getElementById("edit-selected-btn");
 const deleteSelectedBtn = document.getElementById("delete-selected-btn");
 const deleteAllBtn = document.getElementById("delete-all-btn");
 const checkAll = document.getElementById("check-all");
@@ -14,6 +14,14 @@ const fullnameInput = document.getElementById("fullname");
 const dobInput = document.getElementById("dob");
 const majorInput = document.getElementById("major");
 const resetBtn = document.getElementById("reset-btn");
+const confirmModal = document.getElementById("confirm-modal");
+const confirmMessage = document.getElementById("confirm-message");
+const confirmOkBtn = document.getElementById("confirm-ok");
+const confirmCancelBtn = document.getElementById("confirm-cancel");
+
+let currentRows = [];
+let editingSnapshot = null;
+let searchDebounceTimer = null;
 
 function setStatus(msg, isError = false) {
   statusEl.textContent = msg;
@@ -30,12 +38,34 @@ function rowTemplate(row) {
       <td>${row.fullname}</td>
       <td>${String(row.dob).slice(0, 16)}</td>
       <td>${row.major}</td>
-      <td>
-        <button type="button" class="ghost" onclick="editRow(${row.id})">Edit</button>
-        <button type="button" class="danger" onclick="deleteOne(${row.id})">Delete</button>
-      </td>
     </tr>
   `;
+}
+
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    confirmMessage.textContent = message;
+    confirmModal.classList.remove("hidden");
+
+    const onConfirm = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    const onCancel = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    function cleanup() {
+      confirmModal.classList.add("hidden");
+      confirmOkBtn.removeEventListener("click", onConfirm);
+      confirmCancelBtn.removeEventListener("click", onCancel);
+    }
+
+    confirmOkBtn.addEventListener("click", onConfirm);
+    confirmCancelBtn.addEventListener("click", onCancel);
+  });
 }
 
 async function fetchRows(query = "") {
@@ -45,6 +75,7 @@ async function fetchRows(query = "") {
   const res = await fetch(url);
   if (!res.ok) throw new Error("Load failed");
   const rows = await res.json();
+  currentRows = rows;
   bodyEl.innerHTML = rows.map(rowTemplate).join("");
   checkAll.checked = false;
   setStatus(`Loaded ${rows.length} record(s).`);
@@ -54,35 +85,49 @@ function selectedIds() {
   return [...document.querySelectorAll(".row-check:checked")].map((el) => el.value);
 }
 
-async function deleteOne(id) {
-  if (!confirm(`Delete row ${id}?`)) return;
-  const res = await fetch(`/api/students-db/${id}`, { method: "DELETE" });
-  if (!res.ok) {
-    setStatus("Delete failed.", true);
-    return;
-  }
-  setStatus(`Deleted row ${id}.`);
-  fetchRows(searchInput.value.trim());
+function selectedNumericIds() {
+  return selectedIds().map((v) => Number(v));
 }
 
-window.deleteOne = deleteOne;
+function getSelectedSingleIdOrWarn() {
+  const ids = selectedNumericIds();
+  if (!ids.length) {
+    setStatus("Please select exactly one row to edit.", true);
+    return null;
+  }
+  if (ids.length > 1) {
+    setStatus("Only one row can be selected for editing.", true);
+    return null;
+  }
+  return ids[0];
+}
 
-async function editRow(id) {
+async function loadRowIntoForm(id) {
   const res = await fetch(`/api/students-db/${id}`);
   if (!res.ok) {
     setStatus("Cannot load row for editing.", true);
     return;
   }
   const row = await res.json();
+  editingSnapshot = {
+    student_id: row.student_id,
+    fullname: row.fullname,
+    dob: String(row.dob || "").slice(0, 10),
+    major: row.major,
+  };
   rowIdInput.value = row.id;
   studentIdInput.value = row.student_id;
   fullnameInput.value = row.fullname;
-  dobInput.value = String(row.dob || "").slice(0, 10);
+  dobInput.value = editingSnapshot.dob;
   majorInput.value = row.major;
   setStatus(`Editing row ${id}.`);
 }
 
-window.editRow = editRow;
+editSelectedBtn.addEventListener("click", async () => {
+  const id = getSelectedSingleIdOrWarn();
+  if (!id) return;
+  await loadRowIntoForm(id);
+});
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -95,11 +140,24 @@ form.addEventListener("submit", async (e) => {
   };
 
   let res;
-  if (rowIdInput.value) {
+  const isUpdate = rowIdInput.value ? true : false;
+  
+  if (isUpdate) {
+    const changed = {};
+    if (!editingSnapshot || payload.student_id !== editingSnapshot.student_id) changed.student_id = payload.student_id;
+    if (!editingSnapshot || payload.fullname !== editingSnapshot.fullname) changed.fullname = payload.fullname;
+    if (!editingSnapshot || payload.dob !== editingSnapshot.dob) changed.dob = payload.dob;
+    if (!editingSnapshot || payload.major !== editingSnapshot.major) changed.major = payload.major;
+
+    if (Object.keys(changed).length === 0) {
+      setStatus("No changes detected.");
+      return;
+    }
+
     res = await fetch(`/api/students-db/${rowIdInput.value}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(changed),
     });
   } else {
     res = await fetch("/api/students-db", {
@@ -115,19 +173,34 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  setStatus(rowIdInput.value ? "Record updated." : "Record created.");
-  form.reset();
-  rowIdInput.value = "";
-  fetchRows(searchInput.value.trim());
+  const successMsg = isUpdate ? "✓ Record updated successfully!" : "✓ Record created successfully!";
+  setStatus(successMsg);
+  
+  // Auto-clear form and reset UI after short delay
+  setTimeout(() => {
+    form.reset();
+    rowIdInput.value = "";
+    editingSnapshot = null;
+    document.querySelectorAll(".row-check").forEach((el) => {
+      el.checked = false;
+    });
+    checkAll.checked = false;
+    fetchRows(searchInput.value.trim());
+  }, 300);
 });
 
 resetBtn.addEventListener("click", () => {
   form.reset();
   rowIdInput.value = "";
+  editingSnapshot = null;
   setStatus("Form reset.");
 });
 
-searchBtn.addEventListener("click", () => fetchRows(searchInput.value.trim()));
+searchInput.addEventListener("input", () => {
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => fetchRows(searchInput.value.trim()), 250);
+});
+
 refreshBtn.addEventListener("click", () => {
   searchInput.value = "";
   fetchRows();
@@ -146,7 +219,8 @@ deleteSelectedBtn.addEventListener("click", async () => {
     setStatus("Please select at least one row.", true);
     return;
   }
-  if (!confirm(`Delete ${ids.length} selected row(s)?`)) return;
+  const accepted = await showConfirm(`Delete ${ids.length} selected row(s)?`);
+  if (!accepted) return;
 
   const res = await fetch(`/api/students-db?ids=${ids.join(",")}`, { method: "DELETE" });
   if (!res.ok) {
@@ -158,7 +232,9 @@ deleteSelectedBtn.addEventListener("click", async () => {
 });
 
 deleteAllBtn.addEventListener("click", async () => {
-  if (!confirm("Delete ALL rows in students table?")) return;
+  const accepted = await showConfirm("Delete ALL rows in students table?");
+  if (!accepted) return;
+
   const res = await fetch("/api/students-db?all=true", { method: "DELETE" });
   if (!res.ok) {
     setStatus("Delete all failed.", true);
@@ -169,6 +245,6 @@ deleteAllBtn.addEventListener("click", async () => {
 });
 
 fetchRows().catch(() => {
-  bodyEl.innerHTML = '<tr><td colspan="7">Failed to load DB data.</td></tr>';
+  bodyEl.innerHTML = '<tr><td colspan="6">Failed to load DB data.</td></tr>';
   setStatus("Initial load failed.", true);
 });

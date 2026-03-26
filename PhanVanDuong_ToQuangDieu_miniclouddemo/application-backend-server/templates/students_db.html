@@ -23,8 +23,8 @@
 
       <div class="toolbar">
         <input id="search-q" type="text" placeholder="Search by student ID, name, or major..." />
-        <button id="search-btn" type="button">Search</button>
         <button id="refresh-btn" type="button">Refresh</button>
+        <button id="edit-selected-btn" class="ghost" type="button">Edit Selected</button>
         <button id="delete-selected-btn" class="danger" type="button">Delete Selected</button>
         <button id="delete-all-btn" class="danger ghost" type="button">Delete All</button>
       </div>
@@ -39,7 +39,6 @@
               <th>Full Name</th>
               <th>Date of Birth</th>
               <th>Major</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="db-body"></tbody>
@@ -73,9 +72,9 @@
       <h3>Quick notes</h3>
       <ul>
         <li>Create: fill form and click Save.</li>
-        <li>Update: click Edit on a row, modify fields, click Save.</li>
-        <li>Delete one: click Delete on a row.</li>
-        <li>Delete many: check rows and click Delete Selected.</li>
+        <li>Update: select one row and click Edit Selected.</li>
+        <li>Delete selected: check rows and click Delete Selected.</li>
+        <li>Delete all: click Delete All.</li>
       </ul>
       <p id="status" class="status">Ready.</p>
     </aside>
@@ -84,6 +83,17 @@
   <footer class="site-footer">
     <p>MyMiniCloud - Advanced Server 3 CRUD UI</p>
   </footer>
+
+  <div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal-box">
+      <h3 id="confirm-title">Confirm action</h3>
+      <p id="confirm-message">Are you sure?</p>
+      <div class="modal-actions">
+        <button id="confirm-ok" class="danger" type="button">Confirm</button>
+        <button id="confirm-cancel" class="ghost" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <script src="/api/static/js/students-db.js"></script>
 </body>

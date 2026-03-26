@@ -23,7 +23,7 @@ services:
           - web-frontend-server.cloud.local
     ports: [ "8085:8081" ]
     environment:
-      OIDC_ISSUER: "http://authentication-identity-server:8080/realms/master"
+      OIDC_ISSUER: "http://authentication-identity-server:8080/auth/realms/master"
       OIDC_AUDIENCE: "myapp"
 
   relational-database-server:
@@ -50,6 +50,7 @@ services:
       KC_HOSTNAME: "localhost"
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
+      KC_HTTP_RELATIVE_PATH: "/auth"
     ports: [ "8081:8080" ]
     networks:
       cloud-net:

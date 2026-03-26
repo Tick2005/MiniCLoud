@@ -8,18 +8,22 @@ import requests
 import pymysql
 from jose import jwt
 
-ISSUER = os.getenv("OIDC_ISSUER", "http://authentication-identity-server:8080/realms/master")
+ISSUER = os.getenv("OIDC_ISSUER", "http://authentication-identity-server:8080/auth/realms/master")
 AUDIENCE = os.getenv("OIDC_AUDIENCE", "myapp")
 JWKS_URL = f"{ISSUER}/protocol/openid-connect/certs"
 
-_JWKS = None; _TS = 0
-def get_jwks():
-    global _JWKS, _TS
+_JWKS_CACHE = {}
+
+
+def get_jwks(jwks_url=JWKS_URL):
     now = time.time()
-    if not _JWKS or now - _TS > 600:
-        _JWKS = requests.get(JWKS_URL, timeout=5).json()
-        _TS = now
-    return _JWKS
+    cached = _JWKS_CACHE.get(jwks_url)
+    if not cached or now - cached["ts"] > 600:
+        _JWKS_CACHE[jwks_url] = {
+            "value": requests.get(jwks_url, timeout=5).json(),
+            "ts": now,
+        }
+    return _JWKS_CACHE[jwks_url]["value"]
 
 app = Flask(__name__)
 
@@ -121,6 +125,39 @@ def should_render_html():
     if render_format == "html":
         return True
     return request.headers.get("X-Render-Mode", "").lower() == "html"
+
+
+def get_bearer_token():
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        return None
+    return auth.split(" ", 1)[1]
+
+
+def verify_token(token, issuer, audience=None, jwks_url=None):
+    jwks_uri = jwks_url or f"{issuer}/protocol/openid-connect/certs"
+    jwks = get_jwks(jwks_uri)
+    header = jwt.get_unverified_header(token)
+    kid = header.get("kid")
+    key_data = None
+    for jwk in jwks.get("keys", []):
+        if jwk.get("kid") == kid:
+            key_data = jwk
+            break
+    if key_data is None:
+        raise Exception("Unable to find matching JWK for token")
+
+    decode_args = {
+        "key": key_data,
+        "algorithms": ["RS256"],
+        "issuer": issuer,
+    }
+    if audience:
+        decode_args["audience"] = audience
+    else:
+        decode_args["options"] = {"verify_aud": False}
+
+    return jwt.decode(token, **decode_args)
 
 @app.get("/hello")
 def hello(): return jsonify(message="Hello from App Server!")
@@ -322,15 +359,142 @@ def students_db_delete_many():
 
 @app.get("/secure")
 def secure():
-    auth = request.headers.get("Authorization", "")
-    if not auth.startswith("Bearer "):
+    token = get_bearer_token()
+    if not token:
         return jsonify(error="Missing Bearer token"), 401
-    token = auth.split(" ",1)[1]
     try:
-        payload = jwt.decode(token, get_jwks(), algorithms=["RS256"], audience=AUDIENCE, issuer=ISSUER)
+        payload = verify_token(token, ISSUER, AUDIENCE)
         return jsonify(message="Secure resource OK", preferred_username=payload.get("preferred_username"))
     except Exception as e:
         return jsonify(error=str(e)), 401
+
+
+@app.get("/secure-oidc")
+def secure_oidc():
+    token = get_bearer_token()
+    if not token:
+        return jsonify(error="Missing Bearer token"), 401
+
+    issuer = (request.args.get("issuer") or ISSUER).strip()
+    audience = (request.args.get("audience") or "").strip() or None
+    jwks_url = (request.args.get("jwks_url") or "").strip() or None
+    try:
+        payload = verify_token(token, issuer, audience, jwks_url=jwks_url)
+        return jsonify(
+            message="Secure OIDC resource OK",
+            issuer=issuer,
+            audience=audience or "(not-validated)",
+            jwks_url=jwks_url or f"{issuer}/protocol/openid-connect/certs",
+            preferred_username=payload.get("preferred_username"),
+        )
+    except Exception as e:
+        return jsonify(error=str(e), issuer=issuer, audience=audience, jwks_url=jwks_url), 401
+
+
+@app.get("/blog/likes/<article_name>")
+def get_blog_likes(article_name):
+    try:
+        conn = get_db_connection("studentdb")
+        cur = conn.cursor()
+        cur.execute("SELECT COALESCE(COUNT(*), 0) as like_count FROM blog_likes WHERE article_name = %s", (article_name,))
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        like_count = result["like_count"] if result else 0
+        return jsonify(article=article_name, likes=like_count)
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+
+@app.post("/blog/like/<article_name>")
+def add_blog_like(article_name):
+    try:
+        conn = get_db_connection("studentdb")
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO blog_likes (article_name) VALUES (%s)",
+            (article_name,),
+        )
+        conn.commit()
+        cur.execute("SELECT COALESCE(COUNT(*), 0) as like_count FROM blog_likes WHERE article_name = %s", (article_name,))
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        like_count = result["like_count"] if result else 0
+        return jsonify(article=article_name, likes=like_count)
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+
+@app.get("/blog/comments/<article_name>")
+def get_blog_comments(article_name):
+    try:
+        conn = get_db_connection("studentdb")
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, author_name, comment_text, created_at FROM blog_comments WHERE article_name = %s ORDER BY created_at DESC",
+            (article_name,),
+        )
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        comments = [
+            {
+                "id": row["id"],
+                "author": row["author_name"],
+                "text": row["comment_text"],
+                "created_at": str(row["created_at"]) if row["created_at"] else None,
+            }
+            for row in rows
+        ]
+        return jsonify(article=article_name, comments=comments)
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
+
+@app.post("/blog/comment/<article_name>")
+def add_blog_comment(article_name):
+    try:
+        data = request.get_json()
+        author = (data.get("author") or "").strip()
+        text = (data.get("text") or "").strip()
+        
+        if not author or not text:
+            return jsonify(error="Author and text are required"), 400
+        
+        if len(author) > 100:
+            return jsonify(error="Author name too long"), 400
+        if len(text) > 500:
+            return jsonify(error="Comment too long"), 400
+        
+        conn = get_db_connection("studentdb")
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO blog_comments (article_name, author_name, comment_text) VALUES (%s, %s, %s)",
+            (article_name, author, text),
+        )
+        conn.commit()
+        comment_id = cur.lastrowid
+        cur.execute(
+            "SELECT id, author_name, comment_text, created_at FROM blog_comments WHERE id = %s",
+            (comment_id,),
+        )
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        if row:
+            return jsonify(
+                id=row["id"],
+                article=article_name,
+                author=row["author_name"],
+                text=row["comment_text"],
+                created_at=str(row["created_at"]) if row["created_at"] else None,
+            )
+        return jsonify(article=article_name, success=True)
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8081)
