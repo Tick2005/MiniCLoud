@@ -1,7 +1,11 @@
-function getPostKey(suffix) {
+function getPostKey() {
   const pathname = window.location.pathname;
   const match = pathname.match(/(\d+)/);
   return match ? `blog${match[1]}` : 'blog';
+}
+
+function getApiBase() {
+  return "/api";
 }
 
 function bindLikeButton() {
@@ -9,23 +13,25 @@ function bindLikeButton() {
   const likeCount = document.getElementById("like-count");
   if (!likeButton || !likeCount) return;
 
-  const articleName = getPostKey("article");
+  const articleName = getPostKey();
+  const apiBase = getApiBase();
 
   // Load initial like count from backend
-  fetch(`/api/blog/likes/${articleName}`)
+  fetch(`${apiBase}/blog/likes/${articleName}`)
     .then((r) => r.json())
     .then((data) => {
       likeCount.textContent = String(data.likes || 0);
     })
     .catch(() => {
-      // Fallback: use HTML value if API fails
+      likeCount.textContent = "0";
     });
 
   likeButton.addEventListener("click", async () => {
     try {
-      const res = await fetch(`/api/blog/like/${articleName}`, {
+      const res = await fetch(`${apiBase}/blog/like/${articleName}`, {
         method: "POST",
       });
+      if (!res.ok) throw new Error("Like request failed");
       const data = await res.json();
       likeCount.textContent = String(data.likes || 0);
     } catch (err) {
@@ -37,18 +43,20 @@ function bindLikeButton() {
 }
 
 function bindComments() {
-  const commentsSection = [...document.querySelectorAll(".widget")].find((el) => {
-    const h3 = el.querySelector("h3");
-    return h3 && h3.textContent.trim().toLowerCase() === "comments";
-  });
+  const commentsSection = document.getElementById("comments-widget");
   if (!commentsSection) return;
 
-  const articleName = getPostKey("article");
+  const articleName = getPostKey();
+  const apiBase = getApiBase();
   const listWrap = document.createElement("div");
   listWrap.id = "comment-list";
   commentsSection.querySelectorAll(".comment-item").forEach((node) => node.remove());
 
   function renderComments(comments) {
+    if (!comments.length) {
+      listWrap.innerHTML = '<div class="comment-item"><strong>System:</strong> No comments yet.</div>';
+      return;
+    }
     listWrap.innerHTML = comments
       .map((item) => `<div class="comment-item"><strong>${item.author}:</strong> ${item.text}</div>`)
       .join("");
@@ -71,7 +79,7 @@ function bindComments() {
     if (!name || !text) return;
 
     try {
-      const res = await fetch(`/api/blog/comment/${articleName}`, {
+      const res = await fetch(`${apiBase}/blog/comment/${articleName}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ author: name, text: text }),
@@ -87,7 +95,7 @@ function bindComments() {
   });
 
   function loadComments() {
-    fetch(`/api/blog/comments/${articleName}`)
+    fetch(`${apiBase}/blog/comments/${articleName}`)
       .then((r) => r.json())
       .then((data) => {
         const comments = data.comments || [];
@@ -95,7 +103,7 @@ function bindComments() {
       })
       .catch((err) => {
         console.error("Failed to load comments:", err);
-        renderComments([]);
+        listWrap.innerHTML = '<div class="comment-item"><strong>System:</strong> Failed to load comments.</div>';
       });
   }
 

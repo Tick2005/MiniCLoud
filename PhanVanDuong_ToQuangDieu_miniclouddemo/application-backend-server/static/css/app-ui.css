@@ -222,3 +222,36 @@ tbody tr:hover {
     align-items: flex-start;
   }
 }
+
+@media (max-width: 640px) {
+  .page-shell {
+    padding: 16px 12px;
+    gap: 14px;
+  }
+
+  .panel {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .toolbar {
+    gap: 8px;
+  }
+
+  .toolbar input,
+  .toolbar button,
+  #student-form input,
+  .stack button {
+    width: 100%;
+  }
+
+  .stack {
+    flex-direction: column;
+  }
+
+  th,
+  td {
+    font-size: 13px;
+    padding: 8px;
+  }
+}

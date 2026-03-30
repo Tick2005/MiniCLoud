@@ -39,19 +39,126 @@ DB_NAME = os.getenv("DB_NAME", "studentdb")
 MAX_STUDENT_ID_LEN = 10
 MAX_FULLNAME_LEN = 100
 MAX_MAJOR_LEN = 50
+_SCHEMA_READY = False
 
 
-def get_db_connection(database=DB_NAME):
-    return pymysql.connect(
+def ensure_student_schema():
+    global _SCHEMA_READY
+    if _SCHEMA_READY:
+        return
+
+    conn = pymysql.connect(
         host=DB_HOST,
         port=DB_PORT,
         user=DB_USER,
         password=DB_PASSWORD,
-        database=database,
         cursorclass=pymysql.cursors.DictCursor,
         connect_timeout=5,
         autocommit=True,
     )
+    try:
+        with conn.cursor() as cur:
+            cur.execute("CREATE DATABASE IF NOT EXISTS studentdb")
+            cur.execute("USE studentdb")
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS students(
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    student_id VARCHAR(10) NOT NULL,
+                    fullname VARCHAR(100) NOT NULL,
+                    dob DATE NOT NULL,
+                    major VARCHAR(50) NOT NULL
+                )
+                """
+            )
+            cur.execute(
+                """
+                INSERT INTO students(student_id, fullname, dob, major)
+                SELECT 'SV001', 'Nguyen Van A', '2002-03-15', 'Computer Science'
+                WHERE NOT EXISTS (SELECT 1 FROM students WHERE student_id = 'SV001')
+                """
+            )
+            cur.execute(
+                """
+                INSERT INTO students(student_id, fullname, dob, major)
+                SELECT 'SV002', 'Tran Thi B', '2001-11-02', 'Data Science'
+                WHERE NOT EXISTS (SELECT 1 FROM students WHERE student_id = 'SV002')
+                """
+            )
+            cur.execute(
+                """
+                INSERT INTO students(student_id, fullname, dob, major)
+                SELECT 'SV003', 'Le Van C', '2002-07-20', 'Cybersecurity'
+                WHERE NOT EXISTS (SELECT 1 FROM students WHERE student_id = 'SV003')
+                """
+            )
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS blog_comments(
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    article_name VARCHAR(100) NOT NULL,
+                    author_name VARCHAR(100) NOT NULL,
+                    comment_text TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS blog_likes(
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    article_name VARCHAR(100) NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
+    finally:
+        conn.close()
+    _SCHEMA_READY = True
+
+
+def get_db_connection(database=DB_NAME):
+    try:
+        return pymysql.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=database,
+            cursorclass=pymysql.cursors.DictCursor,
+            connect_timeout=5,
+            autocommit=True,
+        )
+    except Exception:
+        ensure_student_schema()
+        return pymysql.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            database=database,
+            cursorclass=pymysql.cursors.DictCursor,
+            connect_timeout=5,
+            autocommit=True,
+        )
+
+
+def get_blog_like_count(cur, article_name):
+    cur.execute(
+        "SELECT COALESCE(COUNT(*), 0) AS like_count FROM blog_likes WHERE article_name = %s",
+        (article_name,),
+    )
+    result = cur.fetchone()
+    return result["like_count"] if result else 0
+
+
+def row_to_comment(row):
+    return {
+        "id": row["id"],
+        "author": row["author_name"],
+        "text": row["comment_text"],
+        "created_at": str(row["created_at"]) if row["created_at"] else None,
+    }
 
 
 def parse_ids(raw_ids):
@@ -158,6 +265,15 @@ def verify_token(token, issuer, audience=None, jwks_url=None):
         decode_args["options"] = {"verify_aud": False}
 
     return jwt.decode(token, **decode_args)
+
+
+def get_identity_from_payload(payload):
+    return (
+        payload.get("preferred_username")
+        or payload.get("username")
+        or payload.get("email")
+        or payload.get("sub")
+    )
 
 @app.get("/hello")
 def hello(): return jsonify(message="Hello from App Server!")
@@ -364,7 +480,10 @@ def secure():
         return jsonify(error="Missing Bearer token"), 401
     try:
         payload = verify_token(token, ISSUER, AUDIENCE)
-        return jsonify(message="Secure resource OK", preferred_username=payload.get("preferred_username"))
+        return jsonify(
+            message="Secure resource OK",
+            preferred_username=get_identity_from_payload(payload),
+        )
     except Exception as e:
         return jsonify(error=str(e)), 401
 
@@ -385,7 +504,7 @@ def secure_oidc():
             issuer=issuer,
             audience=audience or "(not-validated)",
             jwks_url=jwks_url or f"{issuer}/protocol/openid-connect/certs",
-            preferred_username=payload.get("preferred_username"),
+            preferred_username=get_identity_from_payload(payload),
         )
     except Exception as e:
         return jsonify(error=str(e), issuer=issuer, audience=audience, jwks_url=jwks_url), 401
@@ -395,12 +514,11 @@ def secure_oidc():
 def get_blog_likes(article_name):
     try:
         conn = get_db_connection("studentdb")
-        cur = conn.cursor()
-        cur.execute("SELECT COALESCE(COUNT(*), 0) as like_count FROM blog_likes WHERE article_name = %s", (article_name,))
-        result = cur.fetchone()
-        cur.close()
-        conn.close()
-        like_count = result["like_count"] if result else 0
+        try:
+            with conn.cursor() as cur:
+                like_count = get_blog_like_count(cur, article_name)
+        finally:
+            conn.close()
         return jsonify(article=article_name, likes=like_count)
     except Exception as e:
         return jsonify(error=str(e)), 500
@@ -410,17 +528,16 @@ def get_blog_likes(article_name):
 def add_blog_like(article_name):
     try:
         conn = get_db_connection("studentdb")
-        cur = conn.cursor()
-        cur.execute(
-            "INSERT INTO blog_likes (article_name) VALUES (%s)",
-            (article_name,),
-        )
-        conn.commit()
-        cur.execute("SELECT COALESCE(COUNT(*), 0) as like_count FROM blog_likes WHERE article_name = %s", (article_name,))
-        result = cur.fetchone()
-        cur.close()
-        conn.close()
-        like_count = result["like_count"] if result else 0
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO blog_likes (article_name) VALUES (%s)",
+                    (article_name,),
+                )
+                conn.commit()
+                like_count = get_blog_like_count(cur, article_name)
+        finally:
+            conn.close()
         return jsonify(article=article_name, likes=like_count)
     except Exception as e:
         return jsonify(error=str(e)), 500
@@ -430,23 +547,16 @@ def add_blog_like(article_name):
 def get_blog_comments(article_name):
     try:
         conn = get_db_connection("studentdb")
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT id, author_name, comment_text, created_at FROM blog_comments WHERE article_name = %s ORDER BY created_at DESC",
-            (article_name,),
-        )
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-        comments = [
-            {
-                "id": row["id"],
-                "author": row["author_name"],
-                "text": row["comment_text"],
-                "created_at": str(row["created_at"]) if row["created_at"] else None,
-            }
-            for row in rows
-        ]
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT id, author_name, comment_text, created_at FROM blog_comments WHERE article_name = %s ORDER BY created_at DESC",
+                    (article_name,),
+                )
+                rows = cur.fetchall()
+        finally:
+            conn.close()
+        comments = [row_to_comment(row) for row in rows]
         return jsonify(article=article_name, comments=comments)
     except Exception as e:
         return jsonify(error=str(e)), 500
@@ -468,28 +578,30 @@ def add_blog_comment(article_name):
             return jsonify(error="Comment too long"), 400
         
         conn = get_db_connection("studentdb")
-        cur = conn.cursor()
-        cur.execute(
-            "INSERT INTO blog_comments (article_name, author_name, comment_text) VALUES (%s, %s, %s)",
-            (article_name, author, text),
-        )
-        conn.commit()
-        comment_id = cur.lastrowid
-        cur.execute(
-            "SELECT id, author_name, comment_text, created_at FROM blog_comments WHERE id = %s",
-            (comment_id,),
-        )
-        row = cur.fetchone()
-        cur.close()
-        conn.close()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO blog_comments (article_name, author_name, comment_text) VALUES (%s, %s, %s)",
+                    (article_name, author, text),
+                )
+                conn.commit()
+                comment_id = cur.lastrowid
+                cur.execute(
+                    "SELECT id, author_name, comment_text, created_at FROM blog_comments WHERE id = %s",
+                    (comment_id,),
+                )
+                row = cur.fetchone()
+        finally:
+            conn.close()
         
         if row:
+            comment = row_to_comment(row)
             return jsonify(
-                id=row["id"],
+                id=comment["id"],
                 article=article_name,
-                author=row["author_name"],
-                text=row["comment_text"],
-                created_at=str(row["created_at"]) if row["created_at"] else None,
+                author=comment["author"],
+                text=comment["text"],
+                created_at=comment["created_at"],
             )
         return jsonify(article=article_name, success=True)
     except Exception as e:

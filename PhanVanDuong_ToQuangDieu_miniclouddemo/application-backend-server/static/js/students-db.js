@@ -81,6 +81,20 @@ async function fetchRows(query = "") {
   setStatus(`Loaded ${rows.length} record(s).`);
 }
 
+async function fetchRowsWithRetry(query = "", retries = 4) {
+  let lastErr = null;
+  for (let i = 0; i < retries; i += 1) {
+    try {
+      await fetchRows(query);
+      return;
+    } catch (err) {
+      lastErr = err;
+      await new Promise((resolve) => setTimeout(resolve, 350 * (i + 1)));
+    }
+  }
+  throw lastErr;
+}
+
 function selectedIds() {
   return [...document.querySelectorAll(".row-check:checked")].map((el) => el.value);
 }
@@ -244,7 +258,7 @@ deleteAllBtn.addEventListener("click", async () => {
   fetchRows(searchInput.value.trim());
 });
 
-fetchRows().catch(() => {
+fetchRowsWithRetry().catch(() => {
   bodyEl.innerHTML = '<tr><td colspan="6">Failed to load DB data.</td></tr>';
   setStatus("Initial load failed.", true);
 });

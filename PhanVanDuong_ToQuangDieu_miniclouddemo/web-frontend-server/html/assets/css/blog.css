@@ -317,3 +317,26 @@ body {
     flex-direction: column;
   }
 }
+
+@media (max-width: 640px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .btn,
+  #comment-form button,
+  #like-button {
+    width: 100%;
+    text-align: center;
+  }
+}
