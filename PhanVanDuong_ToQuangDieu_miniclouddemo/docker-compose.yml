@@ -13,6 +13,13 @@ services:
           - web-frontend-server.cloud.local
     ports: [ "8080:80" ]
 
+  web-frontend-server2:
+    build: ./web-frontend-server2
+    image: hotensv/web2:dev
+    container_name: web-frontend-server2
+    networks:
+      - cloud-net
+
   application-backend-server:
     build: ./application-backend-server
     image: phanvanduong_toquangdieu/app:dev

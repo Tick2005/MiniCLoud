@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Cloud Lab Illustration">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f2347"/>
+      <stop offset="100%" stop-color="#1a67db"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#eff5ff"/>
+      <stop offset="100%" stop-color="#d8e8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity="0.2" fill="#ffffff">
+    <circle cx="150" cy="120" r="80"/>
+    <circle cx="1040" cy="120" r="120"/>
+    <circle cx="980" cy="520" r="100"/>
+  </g>
+  <rect x="170" y="140" width="860" height="360" rx="24" fill="url(#card)"/>
+  <rect x="220" y="210" width="230" height="130" rx="14" fill="#1a67db"/>
+  <rect x="485" y="210" width="230" height="130" rx="14" fill="#1355b6"/>
+  <rect x="750" y="210" width="230" height="130" rx="14" fill="#0f4393"/>
+  <text x="600" y="190" text-anchor="middle" font-size="36" font-family="Segoe UI, Arial" fill="#103468" font-weight="700">MiniCloud Reliability Lab</text>
+  <text x="335" y="286" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial" fill="#ffffff">Proxy</text>
+  <text x="600" y="286" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial" fill="#ffffff">API</text>
+  <text x="865" y="286" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial" fill="#ffffff">DB</text>
+  <path d="M450 275 L485 275" stroke="#103468" stroke-width="8"/>
+  <path d="M715 275 L750 275" stroke="#103468" stroke-width="8"/>
+  <text x="600" y="560" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial" fill="#eaf2ff">Hands-on loops build durable cloud intuition</text>
+</svg>
