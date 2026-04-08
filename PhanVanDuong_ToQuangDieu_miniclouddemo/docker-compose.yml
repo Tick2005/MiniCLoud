@@ -12,6 +12,7 @@ services:
         aliases:
           - web-frontend-server.cloud.local
     ports: [ "8080:80" ]
+    restart: unless-stopped
 
   web-frontend-server2:
     build: ./web-frontend-server2
@@ -19,6 +20,7 @@ services:
     container_name: web-frontend-server2
     networks:
       - cloud-net
+    restart: unless-stopped
 
   application-backend-server:
     build: ./application-backend-server
@@ -29,6 +31,7 @@ services:
         aliases:
           - web-frontend-server.cloud.local
     ports: [ "8085:8081" ]
+    restart: unless-stopped
     environment:
       OIDC_ISSUER: "${OIDC_ISSUER:-http://authentication-identity-server:8080/auth/realms/master}"
       OIDC_AUDIENCE: "${OIDC_AUDIENCE:-myapp}"
@@ -42,6 +45,7 @@ services:
     volumes:
       - ./relational-database-server/init:/docker-entrypoint-initdb.d:ro
     ports: [ "3306:3306" ]
+    restart: unless-stopped
     networks:
       cloud-net:
         aliases:
@@ -62,6 +66,7 @@ services:
     volumes:
       - ./authentication-identity-server/data:/opt/keycloak/data
     ports: [ "8081:8080" ]
+    restart: unless-stopped
     networks:
       cloud-net:
         aliases:
@@ -77,6 +82,7 @@ services:
     volumes:
       - ./object-storage-server/data:/data
     ports: [ "9000:9000", "9001:9001" ]
+    restart: unless-stopped
     networks:
       cloud-net:
         aliases:
@@ -86,6 +92,7 @@ services:
     image: internetsystemsconsortium/bind9:9.18
     container_name: internal-dns-server
     ports: [ "53:53/tcp", "53:53/udp", "1053:53/tcp", "1053:53/udp" ]
+    restart: unless-stopped
     volumes:
       - ./internal-dns-server/named.conf:/etc/bind/named.conf:ro
       - ./internal-dns-server/named.conf.options:/etc/bind/named.conf.options:ro
@@ -100,6 +107,7 @@ services:
     image: prom/node-exporter:latest
     container_name: monitoring-node-exporter-server
     ports: [ "9100:9100" ]
+    restart: unless-stopped
     networks:
       cloud-net:
         aliases:
@@ -109,6 +117,7 @@ services:
     image: prom/prometheus:latest
     container_name: monitoring-prometheus-server
     ports: [ "9090:9090" ]
+    restart: unless-stopped
     volumes:
       - ./monitoring-prometheus-server/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
@@ -120,6 +129,7 @@ services:
     image: grafana/grafana:latest
     container_name: monitoring-grafana-dashboard-server
     ports: [ "3000:3000" ]
+    restart: unless-stopped
     networks:
       cloud-net:
         aliases:
