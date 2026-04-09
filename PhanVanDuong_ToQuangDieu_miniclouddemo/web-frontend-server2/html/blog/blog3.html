@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blog 3 - Learning That Actually Sticks</title>
+  <title>Blog 3 - Monitoring with Prometheus and Grafana</title>
   <link rel="stylesheet" href="/assets/css/blog.css" />
 </head>
 <body>
   <header class="site-header">
-    <strong>MyMiniCloud Blog</strong>
+    <strong>MyMiniCloud Blog <span class="server-badge">SERVER 2</span></strong>
     <nav>
       <a href="/">Home</a>
       <a href="/blog/">All Posts</a>
@@ -24,77 +24,80 @@
           <a class="btn" href="/blog/blog1.html">Next</a>
         </div>
 
-        <h1>Learning That Actually Sticks in Fast-Moving Tech Domains</h1>
-        <p class="meta">Published by Ethan Pham · 9 min read</p>
+        <h1>Monitoring with Prometheus and Grafana: See What Your System Is Doing</h1>
+        <p class="meta">Published by Ethan Smith · 9 min read</p>
 
         <h2>Quick Summary</h2>
         <ul>
-          <li>Learning is durable when each cycle creates a concrete artifact.</li>
-          <li>Spaced retrieval beats passive re-reading for long-term retention.</li>
-          <li>Explaining your work exposes hidden gaps quickly.</li>
+          <li>Prometheus scrapes metrics from your services at regular intervals.</li>
+          <li>Grafana turns those raw numbers into visual dashboards.</li>
+          <li>Good monitoring catches problems before users notice them.</li>
         </ul>
 
         <figure class="article-media">
-          <a href="/assets/images/learning-loop.svg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/images/learning-loop.svg" alt="Learning loop for durable technical skills" />
+          <a href="/assets/images/grafana.svg" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/images/grafana.svg" alt="Monitoring pipeline from metrics to dashboards" />
           </a>
-          <figcaption>Click image to open full size. Learning improves when every cycle produces an artifact.</figcaption>
+          <figcaption>Click image to open full size. Metrics flow from services to Prometheus to Grafana.</figcaption>
         </figure>
 
         <p>
-          In technology, information decays quickly unless you revisit and apply it.
-          Many students collect tutorials but struggle to transform them into operational skills.
-          The solution is not more content; it is a stronger learning system.
+          Running services without monitoring is like driving without a dashboard. You have no idea
+          how fast you are going, how much fuel is left, or whether the engine is overheating.
+          Prometheus and Grafana together give you that dashboard for your cloud infrastructure.
         </p>
 
-        <h2>Build a layered learning loop</h2>
+        <h2>How Prometheus collects data</h2>
         <p>
-          First, capture concepts in your own words. Second, implement a tiny version in code.
-          Third, explain the result to someone else or to your own notes. This third step exposes
-          blind spots and strengthens retention because explanation demands clarity.
+          Prometheus uses a pull model: it periodically sends HTTP requests to your services'
+          <code>/metrics</code> endpoints and stores the returned data as time series. Each metric
+          has a name, labels, and a value. For example, <code>http_requests_total{method="GET"}</code>
+          counts how many GET requests your service has handled.
         </p>
 
-        <h2>Use spaced retrieval, not passive rereading</h2>
+        <h2>Building Grafana dashboards</h2>
         <p>
-          Instead of reading the same page repeatedly, test yourself after one day, three days,
-          and one week. Try to rebuild the concept from memory: route mapping, JWT validation,
-          SQL schema design, or metrics querying. Retrieval practice is the engine of durable learning.
+          Once Prometheus has data, Grafana connects to it as a data source. You can create panels
+          that display graphs, gauges, tables, and alerts. A well-designed dashboard answers key
+          questions at a glance: Is the service up? How many requests per second? What is the
+          error rate? How much memory is being used?
         </p>
 
-        <h3>From learning to portfolio evidence</h3>
+        <h3>Setting up alerts</h3>
         <p>
-          Every study cycle should produce one artifact: a working endpoint, a dashboard panel,
-          a migration note, or a troubleshooting report. Artifacts make your growth visible and help
-          future collaborators trust your engineering process.
+          The real power of monitoring comes from alerting. You can configure Grafana to notify you
+          when a metric crosses a threshold — for example, when CPU usage exceeds 80% or when the
+          error rate spikes. This means you can respond to issues before they become outages.
         </p>
 
         <p>
-          For stronger retention, combine this with
-          <a href="https://www.coursera.org/articles/spaced-repetition" target="_blank" rel="noopener noreferrer">spaced repetition</a>
-          and short reflective writing. If you document each experiment in a public repository,
-          your portfolio narrative becomes clearer and easier to validate during interviews.
+          To learn more, start with the official
+          <a href="https://prometheus.io/docs/introduction/overview/" target="_blank" rel="noopener noreferrer">Prometheus overview</a>
+          and the
+          <a href="https://grafana.com/docs/grafana/latest/getting-started/" target="_blank" rel="noopener noreferrer">Grafana getting started guide</a>
+          for hands-on dashboard creation.
         </p>
 
-        <h3>Learning Sprint Checklist</h3>
+        <h3>Monitoring Checklist</h3>
         <ul>
-          <li>Summarize one concept in your own words.</li>
-          <li>Implement a tiny proof (API route, SQL query, metric panel).</li>
-          <li>Write a short reflection: what worked, what failed, what to repeat.</li>
+          <li>Expose a /metrics endpoint on your backend service.</li>
+          <li>Configure Prometheus to scrape it in prometheus.yml.</li>
+          <li>Create a Grafana dashboard with at least 3 panels.</li>
         </ul>
       </article>
 
       <aside class="side-stack">
         <section class="widget">
           <h3>Author</h3>
-          <p><strong>Ethan Pham</strong></p>
-          <p>Backend-focused learner who enjoys documenting repeatable study systems.</p>
+          <p><strong>Ethan Smith</strong></p>
+          <p>DevOps learner passionate about observability and system reliability.</p>
         </section>
 
         <section class="widget">
           <h3>Related posts</h3>
           <ul class="post-list">
-            <li><a href="/blog/blog1.html">Building Reliable Cloud Skills</a></li>
-            <li><a href="/blog/blog2.html">Weekend Travel for Engineers</a></li>
+            <li><a href="/blog/blog1.html">Docker Containers Explained Simply</a></li>
+            <li><a href="/blog/blog2.html">Reverse Proxy Basics with Nginx</a></li>
             <li><a href="/blog/">Back to blog index</a></li>
           </ul>
         </section>
@@ -116,7 +119,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>MyMiniCloud - Blog Article 3</p>
+    <p>MyMiniCloud - Blog Article 3 (Server 2)</p>
   </footer>
 
   <script src="/assets/js/blog.js?v=20260330"></script>

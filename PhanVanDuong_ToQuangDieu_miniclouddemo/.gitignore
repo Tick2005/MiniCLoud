@@ -1,0 +1,4 @@
+# Runtime data directories (Docker volume mounts)
+object-storage-server/data/
+monitoring-grafana-dashboard-server/data/
+authentication-identity-server/data/

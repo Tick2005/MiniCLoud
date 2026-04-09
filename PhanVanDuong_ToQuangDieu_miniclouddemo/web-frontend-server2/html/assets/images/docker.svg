@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <g transform="translate(50, 40)">
+    <rect x="50" y="40" width="30" height="20" fill="#0db7ed" stroke="#ffffff" stroke-width="2"/>
+    <rect x="82" y="40" width="30" height="20" fill="#0db7ed" stroke="#ffffff" stroke-width="2"/>
+    <rect x="114" y="40" width="30" height="20" fill="#0db7ed" stroke="#ffffff" stroke-width="2"/>
+    <rect x="66" y="18" width="30" height="20" fill="#0db7ed" stroke="#ffffff" stroke-width="2"/>
+    <rect x="98" y="18" width="30" height="20" fill="#0db7ed" stroke="#ffffff" stroke-width="2"/>
+    <rect x="82" y="-4" width="30" height="20" fill="#0db7ed" stroke="#ffffff" stroke-width="2"/>
+    <path d="M 20,62 Q 20,120 110,120 Q 200,120 220,70 Q 240,80 260,70 Q 250,50 230,60 Q 210,50 200,62 Z" fill="#2496ed"/>
+    <circle cx="180" cy="85" r="4" fill="white"/>
+    <text x="140" y="155" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif" font-weight="bold" font-size="32" fill="#2496ed" text-anchor="middle">docker</text>
+  </g>
+</svg>

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" width="100%" height="100%">
+  <defs>
+    <g id="client">
+      <rect x="0" y="0" width="24" height="16" rx="2" fill="#475569"/>
+      <rect x="2" y="2" width="20" height="12" fill="#cbd5e1"/>
+      <path d="M 8,16 L 16,16 L 14,20 L 10,20 Z" fill="#475569"/>
+      <line x1="6" y1="20" x2="18" y2="20" stroke="#475569" stroke-width="2"/>
+    </g>
+    <g id="server">
+      <rect x="0" y="0" width="20" height="28" rx="2" fill="#334155"/>
+      <circle cx="10" cy="6" r="2" fill="#10b981"/>
+      <circle cx="10" cy="14" r="2" fill="#10b981"/>
+      <circle cx="10" cy="22" r="2" fill="#10b981"/>
+    </g>
+  </defs>
+  
+  <use href="#client" x="30" y="40" />
+  <use href="#client" x="30" y="90" />
+  <use href="#client" x="30" y="140" />
+  
+  <rect x="120" y="70" width="60" height="60" rx="8" fill="#009639"/>
+  <text x="150" y="106" font-family="Segoe UI, Roboto, sans-serif" font-weight="bold" font-size="16" fill="#ffffff" text-anchor="middle">NGINX</text>
+  
+  <use href="#server" x="250" y="34" />
+  <use href="#server" x="250" y="86" />
+  <use href="#server" x="250" y="138" />
+
+  <g stroke="#94a3b8" stroke-width="2" fill="none">
+    <path d="M 60 50 C 90 50, 90 100, 120 100" />
+    <line x1="60" y1="100" x2="120" y2="100" />
+    <path d="M 60 150 C 90 150, 90 100, 120 100" />
+    <path d="M 180 100 C 210 100, 210 48, 246 48" />
+    <line x1="180" y1="100" x2="246" y2="100" />
+    <path d="M 180 100 C 210 100, 210 152, 246 152" />
+  </g>
+  
+  <g fill="#94a3b8">
+    <polygon points="244,45 250,48 244,51" />
+    <polygon points="244,97 250,100 244,103" />
+    <polygon points="244,149 250,152 244,155" />
+  </g>
+</svg>

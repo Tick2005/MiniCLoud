@@ -29,12 +29,12 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - app-backend.cloud.local
     ports: [ "8085:8081" ]
     restart: unless-stopped
     environment:
-      OIDC_ISSUER: "${OIDC_ISSUER:-http://authentication-identity-server:8080/auth/realms/master}"
-      OIDC_AUDIENCE: "${OIDC_AUDIENCE:-myapp}"
+      OIDC_ISSUER: "${OIDC_ISSUER:-http://authentication-identity-server:8080/auth/realms/realm_sv001}"
+      OIDC_AUDIENCE: "account"
 
   relational-database-server:
     image: mariadb:11
@@ -49,7 +49,7 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - relational-database-server.cloud.local
 
   authentication-identity-server:
     image: quay.io/keycloak/keycloak:latest
@@ -70,7 +70,7 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - keycloak.cloud.local
 
   object-storage-server:
     image: minio/minio
@@ -86,7 +86,7 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - minio.cloud.local
 
   internal-dns-server:
     image: internetsystemsconsortium/bind9:9.18
@@ -101,7 +101,7 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - internal-dns-server.cloud.local
 
   monitoring-node-exporter-server:
     image: prom/node-exporter:latest
@@ -111,7 +111,7 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - monitoring-node-exporter-server.cloud.local
 
   monitoring-prometheus-server:
     image: prom/prometheus:latest
@@ -123,17 +123,19 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - monitoring-prometheus-server.cloud.local
 
   monitoring-grafana-dashboard-server:
     image: grafana/grafana:latest
     container_name: monitoring-grafana-dashboard-server
     ports: [ "3000:3000" ]
     restart: unless-stopped
+    volumes:
+      - ./monitoring-grafana-dashboard-server/data:/var/lib/grafana
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - monitoring-grafana-dashboard-server.cloud.local
 
   api-gateway-proxy-server:
     image: nginx:stable
@@ -148,5 +150,5 @@ services:
     networks:
       cloud-net:
         aliases:
-          - web-frontend-server.cloud.local
+          - api-gateway-proxy-server.cloud.local
     restart: unless-stopped

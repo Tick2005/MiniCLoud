@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blog 2 - Weekend Travel for Engineers</title>
+  <title>Blog 2 - Reverse Proxy Basics with Nginx</title>
   <link rel="stylesheet" href="/assets/css/blog.css" />
 </head>
 <body>
   <header class="site-header">
-    <strong>MyMiniCloud Blog</strong>
+    <strong>MyMiniCloud Blog <span class="server-badge">SERVER 2</span></strong>
     <nav>
       <a href="/">Home</a>
       <a href="/blog/">All Posts</a>
@@ -24,78 +24,81 @@
           <a class="btn" href="/blog/blog3.html">Next</a>
         </div>
 
-        <h1>Weekend Travel for Engineers: A Practical Reset Strategy</h1>
-        <p class="meta">Published by Sofia Nguyen · 7 min read</p>
+        <h1>Reverse Proxy Basics with Nginx: Route Traffic Like a Pro</h1>
+        <p class="meta">Published by Jane Doe · 8 min read</p>
 
         <h2>Quick Summary</h2>
         <ul>
-          <li>Changing context helps unblock hard engineering problems.</li>
-          <li>You can rest without hurting delivery if Friday handoff is clean.</li>
-          <li>Simple routines are more sustainable than perfect plans.</li>
+          <li>A reverse proxy sits between users and your backend services.</li>
+          <li>Nginx can route requests to different servers based on URL paths.</li>
+          <li>Load balancing distributes traffic across multiple server instances.</li>
         </ul>
 
         <figure class="article-media">
-          <a href="/assets/images/travel-focus.svg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/images/travel-focus.svg" alt="Weekend focus and planning illustration" />
+          <a href="/assets/images/nginx.svg" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/images/nginx.svg" alt="Reverse proxy traffic flow diagram" />
           </a>
-          <figcaption>Click image to open full size. Healthy reset cycles help long-term engineering quality.</figcaption>
+          <figcaption>Click image to open full size. A reverse proxy centralizes routing decisions.</figcaption>
         </figure>
 
         <p>
-          Technical projects can consume your full attention if you do not create boundaries.
-          A short weekend trip, even within a nearby province, can restore decision quality,
-          reduce cognitive fatigue, and improve your ability to reason through complex problems.
+          In a microservices architecture, users should not need to know which internal server
+          handles their request. A reverse proxy like Nginx accepts all incoming traffic on a
+          single address and forwards each request to the correct backend based on the URL path,
+          hostname, or other rules.
         </p>
 
-        <h2>The value of changing context</h2>
+        <h2>How Nginx location blocks work</h2>
         <p>
-          Engineers often solve difficult bugs after stepping away from the screen. During travel,
-          your brain keeps processing unresolved patterns in the background. You return with a fresh
-          perspective, which often leads to simpler and more maintainable solutions.
+          Each <code>location</code> block in Nginx matches a URL pattern and defines what to do
+          with matching requests. You can proxy them to a backend, serve static files, or return
+          a redirect. The order and type of matching (exact, prefix, regex) determines which block
+          handles each request.
         </p>
 
-        <h2>How to travel without harming delivery</h2>
+        <h2>Load balancing with upstream blocks</h2>
         <p>
-          The key is planning: finish high-risk tasks before Friday evening, leave a clean branch,
-          and document the next three actions for Monday. This approach keeps momentum while allowing
-          genuine rest. You are not escaping responsibility; you are preserving sustainable performance.
+          When you define an <code>upstream</code> block with multiple server entries, Nginx
+          distributes requests across them. The default strategy is round-robin: each request goes
+          to the next server in the list. This is exactly what Extension 10 of our project demonstrates —
+          traffic alternates between web-frontend-server and web-frontend-server2.
         </p>
 
-        <h3>Simple template for your next trip</h3>
+        <h3>Common pitfalls to avoid</h3>
         <p>
-          Keep it light: one destination, one reading list, one reflection note. Avoid packing your
-          weekend with micro-deadlines. If you maintain this habit twice per month, your long-term
-          productivity and technical creativity can improve significantly.
+          Watch out for trailing slashes in <code>proxy_pass</code> directives — they change how
+          Nginx rewrites the URL. Also, when using variables in proxy_pass, query strings are not
+          forwarded automatically; you need to append <code>$is_args$args</code> explicitly.
         </p>
 
         <p>
-          Two practical references worth checking are the
-          <a href="https://www.atlassian.com/blog/productivity/what-is-timeboxing" target="_blank" rel="noopener noreferrer">timeboxing technique</a>
-          for planning your work week and
-          <a href="https://asana.com/resources/work-life-balance-tips" target="_blank" rel="noopener noreferrer">work-life balance habits</a>
-          for avoiding burnout while still shipping features consistently.
+          For a deeper understanding, explore the official
+          <a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html" target="_blank" rel="noopener noreferrer">Nginx proxy module docs</a>
+          and the
+          <a href="https://nginx.org/en/docs/http/load_balancing.html" target="_blank" rel="noopener noreferrer">Nginx load balancing guide</a>
+          to see all available balancing strategies.
         </p>
 
-        <h3>Weekend Reset Checklist</h3>
+        <h3>Action Checklist</h3>
         <ul>
-          <li>Close high-risk tasks before ending Friday.</li>
-          <li>Write 3 concrete Monday actions in your notes.</li>
-          <li>Avoid work notifications during your reset window.</li>
+          <li>Write a basic Nginx config that proxies /api/ to a backend.</li>
+          <li>Add an upstream block with two servers and test round-robin.</li>
+          <li>Experiment with proxy_pass trailing slash behavior.</li>
         </ul>
       </article>
 
       <aside class="side-stack">
         <section class="widget">
           <h3>Author</h3>
-          <p><strong>Sofia Nguyen</strong></p>
-          <p>Developer who studies productivity systems for sustainable engineering careers.</p>
+          <p><strong>Jane Doe</strong></p>
+          <p>Networking enthusiast studying reverse proxies and API gateways.</p>
         </section>
 
         <section class="widget">
           <h3>Related posts</h3>
           <ul class="post-list">
-            <li><a href="/blog/blog1.html">Building Reliable Cloud Skills</a></li>
-            <li><a href="/blog/blog3.html">Learning That Actually Sticks</a></li>
+            <li><a href="/blog/blog1.html">Docker Containers Explained Simply</a></li>
+            <li><a href="/blog/blog3.html">Monitoring with Prometheus and Grafana</a></li>
             <li><a href="/blog/">Back to blog index</a></li>
           </ul>
         </section>
@@ -117,7 +120,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>MyMiniCloud - Blog Article 2</p>
+    <p>MyMiniCloud - Blog Article 2 (Server 2)</p>
   </footer>
 
   <script src="/assets/js/blog.js?v=20260330"></script>

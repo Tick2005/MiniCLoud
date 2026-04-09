@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blog 1 - Building Reliable Cloud Skills</title>
+  <title>Blog 1 - Docker Containers Explained Simply</title>
   <link rel="stylesheet" href="/assets/css/blog.css" />
 </head>
 <body>
   <header class="site-header">
-    <strong>MyMiniCloud Blog</strong>
+    <strong>MyMiniCloud Blog <span class="server-badge">SERVER 2</span></strong>
     <nav>
       <a href="/">Home</a>
       <a href="/blog/">All Posts</a>
@@ -24,81 +24,80 @@
           <a class="btn" href="/blog/blog2.html">Next</a>
         </div>
 
-        <h1>Building Reliable Cloud Skills Through Small, Repeatable Labs</h1>
-        <p class="meta">Published by David Tran · 8 min read</p>
+        <h1>Docker Containers Explained Simply for Beginners</h1>
+        <p class="meta">Published by John Doe · 7 min read</p>
 
         <h2>Quick Summary</h2>
         <ul>
-          <li>Build tiny labs, not huge projects, to shorten your feedback loop.</li>
-          <li>Run the same reliability checklist before and after each change.</li>
-          <li>Practice controlled failures to improve incident response speed.</li>
+          <li>Containers package your app with all its dependencies into one portable unit.</li>
+          <li>Docker Compose lets you run multiple services with a single command.</li>
+          <li>Understanding images vs containers is the first step to cloud fluency.</li>
         </ul>
 
         <figure class="article-media">
-          <a href="/assets/images/cloud-lab.svg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/images/cloud-lab.svg" alt="Mini cloud reliability practice diagram" />
+          <a href="/assets/images/docker.svg" target="_blank" rel="noopener noreferrer">
+            <img src="/assets/images/docker.svg" alt="Docker container architecture diagram" />
           </a>
-          <figcaption>Click image to open full size. Diagram illustrates a compact reliability training loop.</figcaption>
+          <figcaption>Click image to open full size. Containers isolate processes while sharing the host kernel.</figcaption>
         </figure>
 
         <p>
-          Most engineers do not become strong in cloud architecture by reading ten random articles.
-          Real confidence usually appears when you repeatedly build small systems that force you to
-          reason about routing, service discovery, observability, and failure recovery.
+          When you first hear about Docker, it sounds complicated. But the core idea is simple:
+          a container is a lightweight box that holds your application and everything it needs to run.
+          Unlike virtual machines, containers share the host operating system kernel, making them
+          fast to start and efficient with resources.
         </p>
 
-        <h2>Why small labs outperform passive learning</h2>
+        <h2>Images vs Containers</h2>
         <p>
-          A compact lab gives you immediate feedback. You write a config, restart a service,
-          make a request, inspect logs, and then adjust. That fast loop transforms abstract concepts
-          like reverse proxying or DNS zones into muscle memory. Over time, the same workflow teaches
-          you how to isolate root causes quickly under pressure.
+          An image is a read-only template. A container is a running instance of that image.
+          Think of an image like a recipe and a container like the dish you cook from it.
+          You can create many containers from the same image, each running independently.
         </p>
 
-        <h2>A practical reliability routine</h2>
+        <h2>Why Docker Compose matters</h2>
         <p>
-          Start each session with one goal: for example, route a new endpoint or add a database-backed
-          feature without breaking existing APIs. Then run a baseline checklist before and after changes.
-          This habit matters because reliability is not only about adding features, it is about preserving
-          behavior users already depend on.
+          Real projects need multiple services: a web server, a database, a cache, maybe a message
+          queue. Docker Compose lets you define all of them in one YAML file and start everything
+          with <code>docker compose up</code>. This is exactly how our MyMiniCloud project works —
+          nine services, one command.
         </p>
 
-        <h3>What to practice next</h3>
+        <h3>Your first Docker workflow</h3>
         <p>
-          After each successful iteration, intentionally introduce one controlled fault: wrong DNS record,
-          broken proxy path, or missing environment variable. Debug it from logs and network probes,
-          then document the fix. This discipline builds operational maturity and makes your architecture
-          decisions more grounded in reality.
+          Write a Dockerfile that describes your app. Build an image with <code>docker build</code>.
+          Run a container with <code>docker run</code>. When something breaks, check logs with
+          <code>docker logs</code>. This simple cycle is the foundation of container-based development.
         </p>
 
         <p>
-          If you want to deepen this method, read the official
-          <a href="https://12factor.net/" target="_blank" rel="noopener noreferrer">Twelve-Factor App</a>
-          principles and compare them with your current container setup. You can also review
-          <a href="https://prometheus.io/docs/introduction/overview/" target="_blank" rel="noopener noreferrer">Prometheus monitoring basics</a>
-          to understand how observability closes the feedback loop in reliability practice.
+          To go deeper, read the official
+          <a href="https://docs.docker.com/get-started/" target="_blank" rel="noopener noreferrer">Docker Getting Started guide</a>
+          and explore
+          <a href="https://docs.docker.com/compose/" target="_blank" rel="noopener noreferrer">Docker Compose documentation</a>
+          for multi-service setups.
         </p>
 
         <h3>Action Checklist</h3>
         <ul>
-          <li>Create one mini-lab objective for each practice session.</li>
-          <li>Capture baseline logs before changing configs.</li>
-          <li>Introduce one safe failure and document the recovery steps.</li>
+          <li>Build your first custom Docker image from a Dockerfile.</li>
+          <li>Run a multi-container app with Docker Compose.</li>
+          <li>Practice reading container logs to debug issues.</li>
         </ul>
       </article>
 
       <aside class="side-stack">
         <section class="widget">
           <h3>Author</h3>
-          <p><strong>David Tran</strong></p>
-          <p>Cloud engineering student focused on practical system integration.</p>
+          <p><strong>John Doe</strong></p>
+          <p>Cloud computing student exploring containerization and microservices.</p>
         </section>
 
         <section class="widget">
           <h3>Related posts</h3>
           <ul class="post-list">
-            <li><a href="/blog/blog2.html">Weekend Travel for Engineers</a></li>
-            <li><a href="/blog/blog3.html">Learning That Actually Sticks</a></li>
+            <li><a href="/blog/blog2.html">Reverse Proxy Basics with Nginx</a></li>
+            <li><a href="/blog/blog3.html">Monitoring with Prometheus and Grafana</a></li>
             <li><a href="/blog/">Back to blog index</a></li>
           </ul>
         </section>
@@ -120,7 +119,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>MyMiniCloud - Blog Article 1</p>
+    <p>MyMiniCloud - Blog Article 1 (Server 2)</p>
   </footer>
 
   <script src="/assets/js/blog.js?v=20260330"></script>

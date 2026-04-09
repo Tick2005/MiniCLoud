@@ -254,15 +254,17 @@ def verify_token(token, issuer, audience=None, jwks_url=None):
     if key_data is None:
         raise Exception("Unable to find matching JWK for token")
 
+    options = {"verify_iss": False}
+    if not audience:
+        options["verify_aud"] = False
+
     decode_args = {
         "key": key_data,
         "algorithms": ["RS256"],
-        "issuer": issuer,
+        "options": options
     }
     if audience:
         decode_args["audience"] = audience
-    else:
-        decode_args["options"] = {"verify_aud": False}
 
     return jwt.decode(token, **decode_args)
 
