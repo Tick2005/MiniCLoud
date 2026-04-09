@@ -16,7 +16,7 @@ services:
 
   web-frontend-server2:
     build: ./web-frontend-server2
-    image: hotensv/web2:dev
+    image: phanvanduong_toquangdieu/web2:dev
     container_name: web-frontend-server2
     networks:
       - cloud-net
